@@ -4,8 +4,8 @@ import numpy as np
 import cv2
 from PIL import Image
 
-kp_dir = "/media/dvl1/SSD_DATA/bigraph-dataset-bis/trainK_68"
-mask_dir = "/media/dvl1/SSD_DATA/bigraph-dataset-bis/train_mask"
+kp_dir = "/home/ubuntu/anonygan-prova/keypoints"
+mask_dir = "/home/ubuntu/anonygan-prova/masks"
 
 kp_list = os.listdir(kp_dir)
 
