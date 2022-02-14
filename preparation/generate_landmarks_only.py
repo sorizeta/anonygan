@@ -1,0 +1,3 @@
+from train_images_and_keypoints_1 import extract_landmarks
+
+extract_landmarks()

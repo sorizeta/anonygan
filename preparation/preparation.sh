@@ -1,2 +1,2 @@
-python train_images_and_keypoints
+python generate_landmarks_only
 python train_masks
