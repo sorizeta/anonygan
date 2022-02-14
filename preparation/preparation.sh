@@ -1,0 +1,2 @@
+python train_images_and_keypoints
+python train_masks
