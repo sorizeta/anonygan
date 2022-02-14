@@ -1,2 +1,2 @@
-python generate_landmarks_only
-python train_masks
+python generate_landmarks_only.py
+python train_masks.py
