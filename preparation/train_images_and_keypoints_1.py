@@ -4,6 +4,7 @@ import pandas as pd
 import itertools
 import random
 import torch
+import glob
 from landmark_detection import *
 
 # Functions to load samples from folders
@@ -17,8 +18,7 @@ def path_generate_train_pairs(dest_dir):
         images_list = os.listdir(os.path.join(dest_dir, _id))
         images_list = list(map(lambda x: str(x.split(".")[0]), images_list))
         all_couples = list(itertools.combinations(images_list, 2))
-        subset = random.sample(all_couples, 100)
-        df = df.append(subset)
+        df = df.append(all_couples)
 
     df.columns = ['from', 'to']
 
@@ -26,12 +26,12 @@ def path_generate_train_pairs(dest_dir):
 
 
 def detect_landmarks(root_dir, save_name):
-    files = os.listdir(root_dir)
+    files = glob.glob(root_dir + '/*.jpg')
     lnd_list = []
     idx = ["{}".format(x) for x in range(68)]
     
 
-    for f in os.listdir(root_dir):
+    for f in files:
         path = os.path.join(root_dir, f)
         _, lnd = read_im_and_landmarks(path)
         lnd = np.array(lnd).reshape(-1,).tolist()
@@ -49,7 +49,7 @@ def detect_landmarks(root_dir, save_name):
 
 def path_generate_landmarks(dest_dir, landmark_root_dir, landmark_file):
 
-    df = pd.read_csv(os.path.join(dest_dir, "split.csv"), dtype=str, sep=';')
+    df = pd.read_csv(os.path.join(dest_dir, "celeba-pairs-train.csv"), dtype=str, sep='\t')
     all_values = df.to_numpy().flatten().tolist()
     all_values = list(map(lambda x: f"{x}.jpg", all_values))
 
