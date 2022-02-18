@@ -25,11 +25,25 @@ def path_generate_train_pairs(dest_dir):
     df.to_csv(os.path.join(dest_dir, "celeba-pairs-train.csv"), index=False, mode="w")
 
 
-def detect_landmarks(root_dir):
-    for f in os.listdir(root_dir):
-        _, lnd = read_im_and_landmarks(f)
-        print(lnd)
+def detect_landmarks(root_dir, save_name):
+    files = os.listdir(root_dir)
+    lnd_list = []
+    idx = ["{}".format(x) for x in range(68)]
+    
 
+    for f in os.listdir(root_dir):
+        path = os.path.join(root_dir, f)
+        _, lnd = read_im_and_landmarks(path)
+        lnd = np.array(lnd).reshape(-1,).tolist()
+        lnd_dict = dict(zip(idx, lnd))
+        if len(lnd) > 0:
+            lnd_dict['filename'] = str(f)
+            lnd_list.append(lnd_dict)
+    
+    df = pd.DataFrame(lnd_list)
+    file_path = os.path.join(root_dir, save_name)
+    df.to_csv(file_path, sep='\t')
+    return df
         # to do: save in a pandas dataframe and dump to txt
 
 
