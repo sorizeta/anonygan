@@ -12,12 +12,23 @@ PREDICTOR_PATH = os.path.join(os.path.dirname(__file__),
     "./shape_predictor_68_face_landmarks.dat")
 
 predictor = dlib.shape_predictor(PREDICTOR_PATH)
+def rect_to_bb(rect):
+    # take a bounding predicted by dlib and convert it
+    # to the format (x, y, w, h) as we would normally do
+    # with OpenCV
+    x = rect.left()
+    y = rect.top()
+    w = rect.right() - x
+    h = rect.bottom() - y
 
+    # return a tuple of (x, y, w, h)
+    return (x, y, w, h)
 
 def get_landmarks(im):
-    h, w, c = im.shape
-    d = dlib.rectangle(0, 0, w, h)
-    # Get the landmarks/parts for each face in box d.
+    # h, w, c = im.shape
+    detector = dlib.get_frontal_face_detector()
+    det_face = detector(im, 1)
+    d = det_face.pop()
     landmarks = np.matrix([[p.x, p.y] for p in predictor(im, d).parts()])
     return landmarks
 
