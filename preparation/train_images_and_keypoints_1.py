@@ -13,12 +13,11 @@ def path_generate_train_pairs(dest_dir):
 
     df = pd.DataFrame()
 
-
     images_list = glob.glob(dest_dir + '/*.jpg')
     images_list = list(map(lambda x: str(x.split("/")[-1]), images_list))
     images_list = list(map(lambda x: str(x.split(".")[0]), images_list))
     all_couples = list(itertools.combinations(images_list, 2))
-    df = df.concat(all_couples)
+    df = df.append(all_couples)
 
     df.columns = ['from', 'to']
 
