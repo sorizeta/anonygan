@@ -9,7 +9,6 @@ from landmark_detection import *
 
 # Functions to load samples from folders
 
-
 def path_generate_train_pairs(dest_dir):
 
     df = pd.DataFrame()
@@ -17,7 +16,7 @@ def path_generate_train_pairs(dest_dir):
 
     images_list = glob.glob(dest_dir + '/*.jpg')
     images_list = list(map(lambda x: str(x.split("/")[-1]), images_list))
-    
+    images_list = list(map(lambda x: str(x.split(".")[0]), images_list))
     all_couples = list(itertools.combinations(images_list, 2))
     df = df.concat(all_couples)
 
@@ -46,13 +45,14 @@ def detect_landmarks(root_dir, save_name):
     file_path = os.path.join(root_dir, save_name)
     df.to_csv(file_path, sep='\t', index=False)
     return df
-        # to do: save in a pandas dataframe and dump to txt
 
 
 def path_generate_landmarks(dest_dir, landmark_root_dir, landmark_file):
 
     df = pd.read_csv(os.path.join(dest_dir, "celeba-pairs-train.csv"), dtype=str, sep=',')
     all_values = df.to_numpy().flatten().tolist()
+    all_values = list(map(lambda x: f"{x}.jpg", all_values))
+
     landmarks_df: pd.DataFrame = pd.read_csv(os.path.join(dest_dir, landmark_file), header=0, sep='\t')
     
     reduced_lndmks = landmarks_df[landmarks_df['filename'].isin(all_values)]
@@ -83,6 +83,35 @@ def path_generate_landmarks(dest_dir, landmark_root_dir, landmark_file):
     reduced_lndmks.apply(lambda x: create_image(x), axis=1)
 
 
+######################
+# Original functions
+#####################
+
+# Keeping them as a guide
+
+def select_100_train():
+    # move 100 random ids w/ at least 25 images
+    root_dir = "/media/dvl1/SSD_DATA/CelebA/poses_4_hao"
+    dest_dir = "/media/dvl1/SSD_DATA/BiGraphCeleba/train"
+
+    train_idx = []
+    
+    idx = 0
+    for fld in os.listdir(root_dir):
+        src = os.path.join(root_dir, fld)
+        dst = os.path.join(dest_dir, fld)
+        
+        # 14 is the test conditioning image
+        if fld != "14":
+            # shutil.copytree(src, dst)
+            train_idx.append(fld)
+            idx += 1
+        
+        if idx > 99:
+            print("Done...")
+            return 
+
+
 def select_100_test():
     # test set
     root_dir = "/media/dvl1/SSD_DATA/CelebA/poses_4_hao"
@@ -107,6 +136,7 @@ def select_100_test():
             print("Done...")
             return test_idx
 
+
 def generate_train_pairs():
     # extract random pairs of images, 100 per id
     dest_dir = "/media/dvl1/SSD_DATA/BiGraphCeleba/train"
@@ -126,16 +156,16 @@ def generate_train_pairs():
 
 def extract_landmarks():
     # for the used images, extract landmarks and save the in suitable format
-    dest_dir = "/home/ubuntu/anonygan-prova"
-    df = pd.read_csv(os.path.join(dest_dir, "split.csv"), dtype=str, sep=';')
+    dest_dir = "/media/dvl1/SSD_DATA/bigraph-dataset/"
+    df = pd.read_csv(os.path.join(dest_dir, "celeba-pairs-train.csv"), dtype=str)
     all_values = df.to_numpy().flatten().tolist()
     all_values = list(map(lambda x: f"{x}.jpg", all_values))
 
-    landmarks_df: pd.DataFrame = pd.read_csv("/datasets/celeba/Anno/list_landmarks_align_celeba.txt", header=None, delim_whitespace=True)
+    landmarks_df: pd.DataFrame = pd.read_csv("/media/dvl1/SSD_DATA/CelebA/celeba_landmarks/landmark_align.txt", header=None, delim_whitespace=True)
 
     reduced_lndmks = landmarks_df[landmarks_df[0].isin(all_values)]
 
-    root_dir = "/home/ubuntu/anonygan-prova/keypoints"
+    root_dir = "/media/dvl1/SSD_DATA/bigraph-dataset/trainK_68"
 
     # for 29-kp dataset
     #legal_lndmk = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16, 27,28,29,30, 60,61,62,63,64,65,66,67]
