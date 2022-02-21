@@ -9,10 +9,11 @@ def select_identities(id_path, source_path, dest_path, number_ids = 15):
     id_df = pd.read_csv(id_path, header=None, names=['filename', 'identity'], delim_whitespace=True)
     ids = id_df['identity']
     sampled_ids = np.random.choice(ids.unique(), size=number_ids)
-    filenames = list(id_df.loc[id_df['identity'].isin(sampled_ids)]['filename'])
-    for f in filenames:
-        base_name = f.split('.')[0]
-        folder_path = os.path.join(dest_path, base_name)
+    sample_df = id_df.loc[id_df['identity'].isin(sampled_ids)]
+    for row in sample_df.itertuples():
+        identity = row['identity']
+        f = row['filename']
+        folder_path = os.path.join(dest_path, identity)
         if not os.path.exists(folder_path):
             os.mkdir(folder_path)
         src_file = os.path.join(source_path, f)
