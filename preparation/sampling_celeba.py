@@ -11,8 +11,8 @@ def select_identities(id_path, source_path, dest_path, number_ids = 15):
     sampled_ids = np.random.choice(ids.unique(), size=number_ids)
     sample_df = id_df.loc[id_df['identity'].isin(sampled_ids)]
     for row in sample_df.itertuples():
-        identity = row['identity']
-        f = row['filename']
+        f = row[1]
+        identity = row[2]
         folder_path = os.path.join(dest_path, identity)
         if not os.path.exists(folder_path):
             os.mkdir(folder_path)
